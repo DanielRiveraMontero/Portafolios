@@ -56,6 +56,14 @@
     </style>
 <body class="w3-light-grey w3-content" style="max-width:1600px">
 
+    <!-- Modal para imágenes grandes -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <span class="nav-arrow left" onclick="prevImage()">&#10094;</span>
+    <span class="nav-arrow right" onclick="nextImage()">&#10095;</span>
+    <img class="modal-content" id="expandedImg">
+  </div>
+
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="expandedImg">
@@ -234,6 +242,43 @@
 
 <script>
 
+// Variables globales para la navegación
+let currentImageIndex = 0;
+let images = [];
+
+// Función para abrir el modal
+function openModal(img) {
+  const projectImages = img.parentElement.querySelectorAll('img');
+  images = Array.from(projectImages);
+  currentImageIndex = images.indexOf(img);
+
+  document.getElementById("expandedImg").src = img.src;
+  document.getElementById("imageModal").style.display = "block";
+}
+
+// Función para cerrar el modal
+function closeModal() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+// Función para navegar a la imagen anterior
+function prevImage() {
+  currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+  document.getElementById("expandedImg").src = images[currentImageIndex].src;
+}
+
+// Función para navegar a la siguiente imagen
+function nextImage() {
+  currentImageIndex = (currentImageIndex + 1) % images.length;
+  document.getElementById("expandedImg").src = images[currentImageIndex].src;
+}
+
+// Cerrar al hacer click fuera de la imagen
+window.onclick = function(event) {
+  if (event.target == document.getElementById('imageModal')) {
+    closeModal();
+  }
+}
     // Función para abrir el modal
 function openModal(img) {
   document.getElementById("expandedImg").src = img.src;
