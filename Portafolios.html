@@ -73,6 +73,22 @@ body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 .nav-arrow:hover {
   color: #ccc;
 }
+.success-message {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 4px;
+  display: none;
+}
+.error-message {
+  background-color: #f44336;
+  color: white;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 4px;
+  display: none;
+}
 </style>
 <body class="w3-light-grey w3-content" style="max-width:1600px">
 
@@ -203,7 +219,6 @@ body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
           <img src="compra8.jpeg" alt="compra 8" onclick="openModal(this)">
           <img src="compra9.jpeg" alt="compra 9" onclick="openModal(this)">
           <img src="compra10.jpeg" alt="compra 10" onclick="openModal(this)">
-          
           <img src="compra12.jpeg" alt="compra 12" onclick="openModal(this)">
         </div>
         <p>Aplicación para crear una lista de la compra personalizada en la que varias personas pueden colaborar.</p>
@@ -249,21 +264,47 @@ body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <div class="w3-content" style="max-width:600px">
       <h4 class="w3-center"><b>Contáctame</b></h4>
       <p class="w3-center w3-large">¿Tienes algún proyecto en mente? Házmelo saber.</p>
-      <form action="/action_page.php" target="_blank">
+      
+      <!-- Mensajes de estado -->
+      <div id="successMessage" class="success-message">
+        ✓ ¡Mensaje enviado correctamente! Te responderé pronto.
+      </div>
+      <div id="errorMessage" class="error-message">
+        ✗ Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.
+      </div>
+      
+      <!-- Formulario usando Formspree -->
+      <form id="contactForm" action="https://formspree.io/f/xannoojy" method="POST">
+        <input type="hidden" name="_to" value="daniel2003rivera@gmail.com">
+        <input type="hidden" name="_subject" value="Nuevo mensaje desde tu portafolio">
+        <input type="hidden" name="_next" value="#contact">
+        
         <div class="w3-section">
           <label>Nombre</label>
-          <input class="w3-input w3-border" type="text" name="Name" required>
+          <input class="w3-input w3-border" type="text" name="name" required>
         </div>
         <div class="w3-section">
           <label>Email</label>
-          <input class="w3-input w3-border" type="text" name="Email" required>
+          <input class="w3-input w3-border" type="email" name="email" required>
         </div>
         <div class="w3-section">
           <label>Mensaje</label>
-          <input class="w3-input w3-border" type="text" name="Message" required>
+          <textarea class="w3-input w3-border" name="message" rows="5" required></textarea>
         </div>
-        <button type="submit" class="w3-button w3-black w3-margin-bottom w3-block">Enviar el mensaje</button>
+        <button type="submit" class="w3-button w3-black w3-margin-bottom w3-block">
+          <span id="buttonText">Enviar el mensaje</span>
+          <span id="buttonLoading" style="display: none;">Enviando...</span>
+        </button>
       </form>
+      
+      <!-- Alternativa: mailto directo -->
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc;">
+        <p>O contáctame directamente:</p>
+        <a href="mailto:daniel2003rivera@gmail.com?subject=Contacto desde portafolio&body=Hola Daniel,%0D%0A%0D%0A[Escribe tu mensaje aquí]" 
+           class="w3-button w3-dark-grey w3-margin-bottom">
+          📧 Enviar email directo
+        </a>
+      </div>
     </div>
   </div>
 
@@ -320,9 +361,49 @@ function w3_close() {
   document.getElementById("mySidebar").style.display = "none";
   document.getElementById("myOverlay").style.display = "none";
 }
+
+// Manejo del formulario
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const form = this;
+  const formData = new FormData(form);
+  const button = document.getElementById('buttonText');
+  const loading = document.getElementById('buttonLoading');
+  const successMsg = document.getElementById('successMessage');
+  const errorMsg = document.getElementById('errorMessage');
+  
+  // Mostrar estado de carga
+  button.style.display = 'none';
+  loading.style.display = 'inline';
+  successMsg.style.display = 'none';
+  errorMsg.style.display = 'none';
+  
+  // Enviar formulario
+  fetch(form.action, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+  .then(response => {
+    if (response.ok) {
+      successMsg.style.display = 'block';
+      form.reset();
+    } else {
+      throw new Error('Error en el envío');
+    }
+  })
+  .catch(error => {
+    errorMsg.style.display = 'block';
+  })
+  .finally(() => {
+    button.style.display = 'inline';
+    loading.style.display = 'none';
+  });
+});
 </script>
 
-</body>
-</html>
 </body>
 </html>
